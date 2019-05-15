@@ -4,7 +4,12 @@ const {
   topicsData,
   usersData
 } = require('../data');
-const { getCurrentDate, renameKeys, createRef } = require('../../utils/util');
+const {
+  getCurrentDate,
+  formatComments,
+  createRef,
+  formatArray
+} = require('../../utils/util');
 
 exports.seed = (knex, Promise) => {
   return knex.migrate
@@ -21,19 +26,17 @@ exports.seed = (knex, Promise) => {
         .insert(usersData)
         .returning('*');
     })
-    .then(articleRows => {
-      const updatedArticles = getCurrentDate(articlesData, articleRows);
+    .then(userRows => {
+      const updatedArticles = getCurrentDate(articlesData, userRows);
       return knex('articles')
         .insert(updatedArticles)
         .returning('*');
     })
-    .then(commentRows => {
-      const updatedComments = renameKeys(commentsData, commentRows);
-      console.log(updatedComments, '<---');
-      const newComments = getCurrentDate(updatedComments, commentRows);
-      console.log(newComments, '<---');
+    .then(articleRows => {
+      const refObject = createRef(articleRows);
+      const formatedComments = formatComments(commentsData, refObject);
       return knex('comments')
-        .insert(newComments)
+        .insert(formatedComments)
         .returning('*');
     });
 };

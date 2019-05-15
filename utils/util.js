@@ -8,31 +8,45 @@ const getCurrentDate = articlesData => {
 
   return newArticle;
 };
-//2019-05-13T19:11:55.266Z
 
-const renameKeys = (
-  commentsData,
-  keyToChange,
-  newKey,
-  keyToChange1,
-  newKey1
-) => {
-  if (commentsData.length === 0) return [];
-
+const formatComments = (commentsData, commentsRefObj) => {
   const newArray = commentsData.map(comment => {
-    const {
-      [keyToChange]: oldKey,
-      [keyToChange1]: oldKey1,
-      ...restOfStuff
-    } = comment;
-    return { [newKey]: oldKey, [newKey1]: oldKey1, ...restOfStuff };
+    const newComment = { ...comment };
+    newComment.author = comment.created_by;
+    newComment.article_id = commentsRefObj[comment.belongs_to];
+    delete newComment.belongs_to;
+    delete newComment.created_by;
+    return newComment;
+    // const { belongs_to, created_by, ...restOfStuff } = comment;
+    // return { , ...restOfStuff };
   });
-  // console.log(newArray, '<---');
+  //console.log(newArray);
   const newComments = getCurrentDate(newArray);
-  console.log(newComments, '<---');
+
   return newComments;
 };
 
-const createRef = () => {};
+const createRef = articles => {
+  const refObject = {};
+  articles.forEach(article => {
+    refObject[article.title] = article.article_id;
+  });
 
-module.exports = { getCurrentDate, renameKeys, createRef };
+  return refObject;
+};
+
+const formatArray = (objRef, array) => {
+  const formatedResult = array.map(comment => {
+    return {
+      body: comment.body,
+      votes: comment.votes,
+      author: comment.author,
+      created_at: comment.created_at,
+      article_id: objRef[comment.article_id]
+    };
+  });
+
+  return formatedResult;
+};
+
+module.exports = { getCurrentDate, formatComments, createRef, formatArray };
