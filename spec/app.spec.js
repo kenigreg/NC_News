@@ -56,25 +56,9 @@ describe.only('/', () => {
           );
         });
     });
-    xit('GET returns status:200 and articles objects containing an array of articles sorted by the passed query', () => {
+    it('GET returns status:200 and articles objects containing an array of articles sorted by the passed query', () => {
       return request(app)
-        .get('/api/articles?sort_by=article_id')
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles[0]).to.eql({
-            article_id: 1,
-            title: 'Living in the shadow of a great man',
-            topic: 'mitch',
-            author: 'butter_bridge',
-            body: 'I find this existence challenging',
-            created_at: new Date(1542284514171),
-            votes: 100
-          });
-        });
-    });
-    it('GET returns status:200 and articles objects containing an array of articles sorted by the passed query in descending order', () => {
-      return request(app)
-        .get('/api/articles?sort_by=article_id&order=desc')
+        .get('/api/articles?sort_by=article_id&order=asc')
         .expect(200)
         .then(({ body }) => {
           expect(body.articles[0]).to.eql({
@@ -85,6 +69,39 @@ describe.only('/', () => {
             body: 'I find this existence challenging',
             created_at: '2018-11-15T12:21:54.171+00:00',
             votes: 100
+          });
+        });
+    });
+
+    it('GET returns status:200 and articles objects containing an array of articles sorted by author passed as query', () => {
+      return request(app)
+        .get('/api/articles?author=butter_bridge')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles[2]).to.eql({
+            article_id: 12,
+            title: 'Moustache',
+            topic: 'mitch',
+            author: 'butter_bridge',
+            body: 'Have you seen the size of that thing?',
+            created_at: '1974-11-26T12:21:54.171+00:00',
+            votes: 0
+          });
+        });
+    });
+    it('GET returns status:200 and articles objects containing an array of articles sorted by topic passed as query', () => {
+      return request(app)
+        .get('/api/articles?topic=cats')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles[0]).to.eql({
+            article_id: 5,
+            title: 'UNCOVERED: catspiracy to bring down democracy',
+            topic: 'cats',
+            author: 'rogersop',
+            body: 'Bastet walks amongst us, and the cats are taking arms!',
+            created_at: '2002-11-19T12:21:54.171+00:00',
+            votes: 0
           });
         });
     });
