@@ -211,7 +211,7 @@ describe('/articles/:article_id/comments', () => {
   });
 });
 
-describe.only('/comments/:comment_id', () => {
+describe('/comments/:comment_id', () => {
   it('PATCH returns status 200 and the object which was updated', () => {
     return request(app)
       .patch('/api/comments/2')
@@ -226,6 +226,39 @@ describe.only('/comments/:comment_id', () => {
           author: 'butter_bridge',
           votes: 24,
           created_at: '2016-11-22T12:36:03.389+00:00'
+        });
+      });
+  });
+  it('DELETE returns status 204 and the object which was deleted', () => {
+    return request(app)
+      .delete('/api/comments/2')
+      .expect(204)
+      .then(({ body }) => {
+        expect(body.comment[0]).to.eql({
+          comment_id: 2,
+          body:
+            'The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.',
+          article_id: 1,
+          author: 'butter_bridge',
+          votes: 24,
+          created_at: '2016-11-22T12:36:03.389+00:00'
+        });
+      });
+  });
+});
+
+describe.only('/users/:username', () => {
+  it('GET returns status:200 and user object containing an array of user by passed username', () => {
+    return request(app)
+      .get('/api/users/rogersop')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.user).to.be.an('array');
+        expect(body.user[0]).to.eql({
+          username: 'rogersop',
+          avatar_url:
+            'https://avatars2.githubusercontent.com/u/24394918?s=400&v=4',
+          name: 'paul'
         });
       });
   });
