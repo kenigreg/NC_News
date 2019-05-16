@@ -109,7 +109,7 @@ describe('/', () => {
   });
 });
 
-describe.only('/articles/:article_id', () => {
+describe('/articles/:article_id', () => {
   it('GET returns status:200 and articles objects containing an array of an article by the passed article_id', () => {
     return request(app)
       .get('/api/articles/1')
@@ -156,20 +156,77 @@ describe.only('/articles/:article_id', () => {
       });
   });
 });
-it('GET returns status:200 and articles objects containing an array of an article by the passed article_id with count of the comments for the article_id', () => {
-  return request(app)
-    .get('/api/articles/50')
-    .expect(200)
-    .then(({ body }) => {
-      expect(body.articles).to.be.an('array');
-      expect(body.articles[0]).to.eql({
-        article_id: 1,
-        title: 'Living in the shadow of a great man',
-        topic: 'mitch',
-        author: 'butter_bridge',
-        body: 'I find this existence challenging',
-        created_at: '2018-11-15T12:21:54.171+00:00',
-        votes: 100
+
+describe('/articles/:article_id/comments', () => {
+  it('GET returns status:200 and articles objects containing an array of an article comments by the passed article_id', () => {
+    return request(app)
+      .get('/api/articles/5/comments')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments[0]).to.include.all.keys(
+          'comment_id',
+          'author',
+          'created_at',
+          'body',
+          'votes'
+        );
+
+        expect(body.comments).to.eql([
+          {
+            comment_id: 14,
+            body:
+              'What do you see? I have no idea where this will lead us. This place I speak of, is known as the Black Lodge.',
+            author: 'icellusedkars',
+            votes: 16,
+            created_at: '2004-11-25T12:36:03.389+00:00'
+          },
+          {
+            comment_id: 15,
+            body: "I am 100% sure that we're not completely sure.",
+            author: 'butter_bridge',
+            votes: 1,
+            created_at: '2003-11-26T12:36:03.389+00:00'
+          }
+        ]);
       });
-    });
+  });
+});
+
+describe('/articles/:article_id/comments', () => {
+  it('POST returns status:201 and posted comments objects containing comment posted by the passed article_id', () => {
+    return request(app)
+      .post('/api/articles/2/comments')
+      .send({
+        author: 'lurker',
+        body:
+          'I am safe, whatever may betide me; I am safe who ever may deride me; I am safe, as long as I confide me In the hollow of God’s hand.'
+      })
+      .expect(201)
+      .then(({ body }) => {
+        console.log(body);
+        expect(body.comment[0]).to.eql(
+          'I am safe, whatever may betide me; I am safe who ever may deride me; I am safe, as long as I confide me In the hollow of God’s hand.'
+        );
+      });
+  });
+});
+
+describe.only('/comments/:comment_id', () => {
+  it('PATCH returns status 200 and the object which was updated', () => {
+    return request(app)
+      .patch('/api/comments/2')
+      .send({ votes: '24' })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).to.eql({
+          comment_id: 2,
+          body:
+            'The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.',
+          article_id: 1,
+          author: 'butter_bridge',
+          votes: 24,
+          created_at: '2016-11-22T12:36:03.389+00:00'
+        });
+      });
+  });
 });

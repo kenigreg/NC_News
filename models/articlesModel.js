@@ -11,7 +11,7 @@ exports.fetchArticles = (sort_by, order, author, topic) => {
     });
 };
 
-exports.fetchArticlesById = (article_id, comments) => {
+exports.fetchArticlesById = article_id => {
   return connection
     .select(
       'articles.article_id',
@@ -34,4 +34,27 @@ exports.changeVotesByArticleId = (article_id, newVote) => {
     .where('article_id', '=', article_id)
     .update(newVote)
     .returning('*');
+};
+
+exports.fetchCommentsByArticleId = (article_id, sort_by, order) => {
+  return connection
+    .select(
+      'comments.comment_id',
+      'comments.votes',
+      'comments.created_at',
+      'comments.author',
+      'comments.body'
+    )
+    .orderBy(sort_by || 'created_at', order || 'desc')
+    .from('comments')
+    .groupBy('comments.comment_id')
+    .where('comments.article_id', '=', article_id)
+    .leftJoin('articles', 'comments.article_id', '=', 'articles.article_id');
+};
+
+exports.insertCommentsByArticleId = (article_id, comment) => {
+  return connection('comments')
+    .returning('body')
+    .where('comments.article_id', '=', article_id)
+    .insert(comment);
 };
