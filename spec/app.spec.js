@@ -8,7 +8,7 @@ const connection = require('../db/connection');
 
 chai.use(require('chai-sorted'));
 
-describe.only('/', () => {
+describe('/', () => {
   beforeEach(() => connection.seed.run());
   after(() => connection.destroy());
 
@@ -89,6 +89,7 @@ describe.only('/', () => {
           });
         });
     });
+
     it('GET returns status:200 and articles objects containing an array of articles sorted by topic passed as query', () => {
       return request(app)
         .get('/api/articles?topic=cats')
@@ -106,4 +107,69 @@ describe.only('/', () => {
         });
     });
   });
+});
+
+describe.only('/articles/:article_id', () => {
+  it('GET returns status:200 and articles objects containing an array of an article by the passed article_id', () => {
+    return request(app)
+      .get('/api/articles/1')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).to.be.an('object');
+        expect(body.article).to.eql({
+          article_id: 1,
+          title: 'Living in the shadow of a great man',
+          topic: 'mitch',
+          author: 'butter_bridge',
+          body: 'I find this existence challenging',
+          created_at: '2018-11-15T12:21:54.171+00:00',
+          votes: 110,
+          comment_count: '13'
+        });
+      });
+  });
+  it('PATCH returns status 200 and the object which was updated', () => {
+    return request(app)
+      .patch('/api/articles/1')
+      .send({ votes: '110' })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).to.eql({
+          article_id: 1,
+          title: 'Living in the shadow of a great man',
+          topic: 'mitch',
+          author: 'butter_bridge',
+          body: 'I find this existence challenging',
+          created_at: '2018-11-15T12:21:54.171+00:00',
+          votes: 110
+        });
+      });
+  });
+  it('GET status:400 responds with error message when request is made with a bad/invalid article_id', () => {
+    return request(app)
+      .get('/api/articles/abc')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).to.equal(
+          'Bad Request, incorrect form for article_id!'
+        );
+      });
+  });
+});
+it('GET returns status:200 and articles objects containing an array of an article by the passed article_id with count of the comments for the article_id', () => {
+  return request(app)
+    .get('/api/articles/50')
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.articles).to.be.an('array');
+      expect(body.articles[0]).to.eql({
+        article_id: 1,
+        title: 'Living in the shadow of a great man',
+        topic: 'mitch',
+        author: 'butter_bridge',
+        body: 'I find this existence challenging',
+        created_at: '2018-11-15T12:21:54.171+00:00',
+        votes: 100
+      });
+    });
 });
