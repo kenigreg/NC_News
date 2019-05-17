@@ -20,7 +20,7 @@ const formatComments = (commentsData, commentsRefObj) => {
     // const { belongs_to, created_by, ...restOfStuff } = comment;
     // return { , ...restOfStuff };
   });
-  //console.log(newArray);
+
   const newComments = getCurrentDate(newArray);
 
   return newComments;
