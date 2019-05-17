@@ -7,8 +7,7 @@ const {
 const {
   getCurrentDate,
   formatComments,
-  createRef,
-  formatArray
+  createRef
 } = require('../../utils/util');
 
 exports.seed = (knex, Promise) => {

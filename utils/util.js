@@ -35,18 +35,4 @@ const createRef = articles => {
   return refObject;
 };
 
-const formatArray = (objRef, array) => {
-  const formatedResult = array.map(comment => {
-    return {
-      body: comment.body,
-      votes: comment.votes,
-      author: comment.author,
-      created_at: comment.created_at,
-      article_id: objRef[comment.article_id]
-    };
-  });
-
-  return formatedResult;
-};
-
-module.exports = { getCurrentDate, formatComments, createRef, formatArray };
+module.exports = { getCurrentDate, formatComments, createRef };

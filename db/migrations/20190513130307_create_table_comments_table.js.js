@@ -7,11 +7,15 @@ exports.up = function(knex, Promise) {
     commentsTable
       .string('author')
       .references('username')
-      .inTable('users');
+      .inTable('users')
+      .unsigned()
+      .onDelete('CASCADE');
     commentsTable
       .integer('article_id')
       .references('article_id')
-      .inTable('articles');
+      .inTable('articles')
+      .unsigned()
+      .onDelete('CASCADE');
     commentsTable.integer('votes').defaultTo(0);
     commentsTable.string('created_at').defaultTo(now);
     commentsTable.string('body', 2000);

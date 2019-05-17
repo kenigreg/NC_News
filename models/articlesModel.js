@@ -3,12 +3,22 @@ const connection = require('../db/connection');
 exports.fetchArticles = (sort_by, order, author, topic) => {
   return connection
     .table('articles')
-    .select('*')
+    .select(
+      'articles.author',
+      'articles.title',
+      'articles.article_id',
+      'articles.topic',
+      'articles.created_at',
+      'articles.votes'
+    )
     .orderBy(sort_by || 'created_at', order || 'desc')
     .modify(query => {
-      if (author) query.where('author', '=', author);
+      if (author) query.where('articles.author', '=', author);
       if (topic) query.where('topic', '=', topic);
-    });
+    })
+    .count('comments.article_id as comment_count')
+    .groupBy('articles.article_id')
+    .leftJoin('comments', 'articles.article_id', '=', 'comments.article_id');
 };
 
 exports.fetchArticlesById = article_id => {
@@ -29,10 +39,10 @@ exports.fetchArticlesById = article_id => {
     .leftJoin('comments', 'articles.article_id', '=', 'comments.article_id');
 };
 
-exports.changeVotesByArticleId = (article_id, newVote) => {
+exports.changeVotesByArticleId = (article_id, { inc_votes }) => {
   return connection('articles')
     .where('article_id', '=', article_id)
-    .update(newVote)
+    .increment('votes', inc_votes)
     .returning('*');
 };
 
@@ -47,14 +57,13 @@ exports.fetchCommentsByArticleId = (article_id, sort_by, order) => {
     )
     .orderBy(sort_by || 'created_at', order || 'desc')
     .from('comments')
-    .groupBy('comments.comment_id')
+
     .where('comments.article_id', '=', article_id)
     .leftJoin('articles', 'comments.article_id', '=', 'articles.article_id');
 };
 
-exports.insertCommentsByArticleId = (article_id, comment) => {
+exports.insertCommentsByArticleId = keys => {
   return connection('comments')
-    .returning('body')
-    .where('comments.article_id', '=', article_id)
-    .insert(comment);
+    .insert(keys)
+    .returning('*');
 };

@@ -10,11 +10,15 @@ exports.up = function(knex, Promise) {
     articlesTable
       .string('topic')
       .references('slug')
-      .inTable('topics');
+      .inTable('topics')
+      .unsigned()
+      .onDelete('CASCADE');
     articlesTable
       .string('author')
       .references('username')
-      .inTable('users');
+      .inTable('users')
+      .unsigned()
+      .onDelete('CASCADE');
     articlesTable.string('created_at').defaultTo(now);
   });
 };

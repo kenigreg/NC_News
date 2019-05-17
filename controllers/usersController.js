@@ -4,6 +4,8 @@ exports.getUserName = (req, res, next) => {
   const { username } = req.params;
 
   fetchUserName(username)
-    .then(user => res.status(200).send({ user }))
+    .then(user => {
+      res.status(200).send({ user });
+    })
     .catch(next);
 };

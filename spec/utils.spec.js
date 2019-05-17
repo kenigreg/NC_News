@@ -1,10 +1,5 @@
 const { expect } = require('chai');
-const {
-  getCurrentDate,
-  formatComments,
-  createRef,
-  formatArray
-} = require('../utils/util');
+const { getCurrentDate, formatComments, createRef } = require('../utils/util');
 
 describe('getCurrentDate', () => {
   it('returns a new empty array, when passed an empty array', () => {
@@ -133,77 +128,46 @@ describe('formatComments', () => {
 
     expect(formatComments(comment, refObj)).to.eql(expected);
   });
-  it('returns a new array, when passed an array of 1 element', () => {
-    const albums = [
-      {
-        body: ' I carry a log — yes. Is it funny to you? It is not to me.',
-        belongs_to: 'Living in the shadow of a great man',
-        created_by: 'icellusedkars',
-        votes: -100,
-        created_at: 1416746163389
-      }
-    ];
 
-    const actual = formatComments(albums);
-    const expected = [
-      {
-        body: ' I carry a log — yes. Is it funny to you? It is not to me.',
-        article_id: 'Living in the shadow of a great man',
-        author: 'icellusedkars',
-        votes: -100,
-        created_at: new Date(1416746163389)
-      }
-    ];
-    expect(actual).to.eql(expected);
-    expect(actual).to.not.equal(albums);
-  });
   it('returns a new array, when passed an array of more than 1 element', () => {
-    const albums = [
+    const comment = [
       {
-        body: ' I carry a log — yes. Is it funny to you? It is not to me.',
-        belongs_to: 'Living in the shadow of a great man',
-        created_by: 'icellusedkars',
-        votes: -100,
+        body: 'test_body',
+        belongs_to: 'test_title',
+        created_by: 'test_user',
+        votes: 0,
         created_at: 1416746163389
       },
       {
-        body: 'I hate streaming noses',
-        belongs_to: 'Living in the shadow of a great man',
-        created_by: 'icellusedkars',
-        votes: 0,
-        created_at: 1385210163389
+        body: 'test_body2',
+        belongs_to: 'test_title2',
+        created_by: 'test_user2',
+        votes: -100,
+        created_at: 1416746163389
       }
     ];
-    const keyToChange = 'belongs_to';
-    const newKey = 'article_id';
-    const keyToChange1 = 'created_by';
-    const newKey1 = 'author';
 
-    const actual = formatComments(
-      albums,
-      keyToChange,
-      newKey,
-      keyToChange1,
-      newKey1
-    );
     const expected = [
       {
-        body: ' I carry a log — yes. Is it funny to you? It is not to me.',
-        article_id: 'Living in the shadow of a great man',
-        author: 'icellusedkars',
-        votes: -100,
+        body: 'test_body',
+        article_id: 1,
+        author: 'test_user',
+        votes: 0,
         created_at: new Date(1416746163389)
       },
       {
-        body: 'I hate streaming noses',
-        article_id: 'Living in the shadow of a great man',
-        author: 'icellusedkars',
-        votes: 0,
-        created_at: new Date(1385210163389)
+        body: 'test_body2',
+        article_id: 2,
+        author: 'test_user2',
+        votes: -100,
+        created_at: new Date(1416746163389)
       }
     ];
-    expect(actual).to.eql(expected);
-    expect(actual).to.not.equal(albums);
+
+    const refObj = { test_title: 1, test_title2: 2 };
+
+    expect(formatComments(comment, refObj)).to.eql(expected);
+    expect(formatComments(comment, refObj)).to.not.equal(comment);
   });
 });
 
@@ -211,7 +175,6 @@ describe('createRef', () => {
   it('returns a new empty object, when passed an empty array', () => {
     const input = [];
 
-    //const key = 'article_id';
     const actual = createRef(input);
     const expected = {};
     expect(actual).to.eql(expected);
@@ -263,82 +226,6 @@ describe('createRef', () => {
       'Living in the shadow of a great man': 1,
       'Eight pug gifs that remind me of mitch': 2
     };
-    expect(actual).to.eql(expected);
-    expect(actual).to.not.equal(input);
-  });
-});
-
-describe('formatArray', () => {
-  it('returns a new empty array, when passed an empty array', () => {
-    const input = [];
-    const objRef = {};
-    const actual = formatArray(objRef, input);
-    const expected = [];
-    expect(actual).to.eql(expected);
-    expect(actual).to.not.equal(input);
-  });
-  it('returns a new array, when passed an array of 1 item', () => {
-    const input = [
-      {
-        body: 'I hate streaming noses',
-        article_id: 'Living in the shadow of a great man',
-        author: 'icellusedkars',
-        votes: 0,
-        created_at: new Date(1385210163389)
-      }
-    ];
-    const objRef = { 'Living in the shadow of a great man': 1 };
-    const actual = formatArray(objRef, input);
-    const expected = [
-      {
-        body: 'I hate streaming noses',
-        article_id: 1,
-        author: 'icellusedkars',
-        votes: 0,
-        created_at: new Date(1385210163389)
-      }
-    ];
-    expect(actual).to.eql(expected);
-    expect(actual).to.not.equal(input);
-  });
-  it('returns a new array, when passed an array of more than 1 item', () => {
-    const input = [
-      {
-        body: 'I hate streaming noses',
-        article_id: 'Living in the shadow of a great man',
-        author: 'icellusedkars',
-        votes: 0,
-        created_at: new Date(1385210163389)
-      },
-      {
-        body: 'Fruit pastilles',
-        article_id: 'Eight pug gifs that remind me of mitch',
-        author: 'icellusedkars',
-        votes: 0,
-        created_at: new Date(1132922163389)
-      }
-    ];
-    const objRef = {
-      'Living in the shadow of a great man': 1,
-      'Eight pug gifs that remind me of mitch': 2
-    };
-    const actual = formatArray(objRef, input);
-    const expected = [
-      {
-        body: 'I hate streaming noses',
-        article_id: 1,
-        author: 'icellusedkars',
-        votes: 0,
-        created_at: new Date(1385210163389)
-      },
-      {
-        body: 'Fruit pastilles',
-        article_id: 2,
-        author: 'icellusedkars',
-        votes: 0,
-        created_at: new Date(1132922163389)
-      }
-    ];
     expect(actual).to.eql(expected);
     expect(actual).to.not.equal(input);
   });
