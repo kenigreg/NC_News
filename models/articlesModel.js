@@ -1,6 +1,6 @@
 const connection = require('../db/connection');
 
-exports.fetchArticles = (sort_by, order, author, topic) => {
+exports.fetchArticles = (sort_by, order, author, topic, p, limit) => {
   return connection
     .table('articles')
     .select(
@@ -11,6 +11,8 @@ exports.fetchArticles = (sort_by, order, author, topic) => {
       'articles.created_at',
       'articles.votes'
     )
+    .limit(limit || 10)
+    .offset(limit * (p - 1))
     .orderBy(sort_by || 'created_at', order || 'desc')
     .modify(query => {
       if (author) query.where('articles.author', '=', author);
@@ -33,6 +35,7 @@ exports.fetchArticlesById = article_id => {
       'articles.votes'
     )
     .from('articles')
+
     .count('comments.comment_id as comment_count')
     .groupBy('articles.article_id')
     .where('articles.article_id', '=', article_id)
@@ -42,7 +45,7 @@ exports.fetchArticlesById = article_id => {
 exports.changeVotesByArticleId = (article_id, { inc_votes }) => {
   return connection('articles')
     .where('article_id', '=', article_id)
-    .increment('votes', inc_votes)
+    .increment('votes', inc_votes || 0)
     .returning('*');
 };
 
@@ -55,6 +58,7 @@ exports.fetchCommentsByArticleId = (article_id, sort_by, order) => {
       'comments.author',
       'comments.body'
     )
+
     .orderBy(sort_by || 'created_at', order || 'desc')
     .from('comments')
 

@@ -17,8 +17,8 @@ exports.up = function(knex, Promise) {
       .unsigned()
       .onDelete('CASCADE');
     commentsTable.integer('votes').defaultTo(0);
-    commentsTable.string('created_at').defaultTo(now);
-    commentsTable.string('body', 2000);
+    commentsTable.string('created_at').defaultTo(knex.fn.now());
+    commentsTable.string('body', 2000).notNullable();
   });
 };
 

@@ -19,7 +19,7 @@ exports.up = function(knex, Promise) {
       .inTable('users')
       .unsigned()
       .onDelete('CASCADE');
-    articlesTable.string('created_at').defaultTo(now);
+    articlesTable.string('created_at').defaultTo(knex.fn.now());
   });
 };
 

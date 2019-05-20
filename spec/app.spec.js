@@ -8,7 +8,7 @@ const connection = require('../db/connection');
 
 chai.use(require('chai-sorted'));
 
-describe('/', () => {
+describe('/api', () => {
   beforeEach(() => connection.seed.run());
   after(() => connection.destroy());
 
@@ -34,7 +34,7 @@ describe('/', () => {
         .get('/api/articles')
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles).to.have.length(12);
+          expect(body.articles).to.have.length(10);
           expect(body.articles).to.be.an('array');
           expect(body.articles[0]).to.eql({
             article_id: 1,
@@ -108,6 +108,49 @@ describe('/', () => {
     });
   });
 
+  describe('/articles', () => {
+    it('GET status:404 responds with error message when request is made with a topic that does not exist', () => {
+      return request(app)
+        .get('/api/articles?topic=not-a-topic')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('Route Not Found');
+        });
+    });
+    it('GET status:404 responds with error message when request is made with an author that does not exist', () => {
+      return request(app)
+        .get('/api/articles?author=not-an-author')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('Route Not Found');
+        });
+    });
+    it('GET status:400 responds with error message when request is made with a column that does not exist', () => {
+      return request(app)
+        .get('/api/articles?sort_by=not-a-column')
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('Column does Not Exist');
+        });
+    });
+    it('PATCH status:405 responds with error message when request is made api/articles route', () => {
+      return request(app)
+        .patch('/api/articles')
+        .expect(405)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('Method Not Allowed');
+        });
+    });
+    it('PUT status:405 responds with error message when request is made api/articles route', () => {
+      return request(app)
+        .put('/api/articles/1')
+        .expect(405)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('Method Not Allowed');
+        });
+    });
+  });
+
   describe('/articles/:article_id', () => {
     it('GET returns status:200 and articles objects containing an array of an article by the passed article_id', () => {
       return request(app)
@@ -144,13 +187,30 @@ describe('/', () => {
           });
         });
     });
+    it('PATCH status:200 responds with unchanged article to the client when request is made with no information in the request body', () => {
+      return request(app)
+        .patch('/api/articles/1')
+        .send({})
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article).to.eql({
+            article_id: 1,
+            title: 'Living in the shadow of a great man',
+            topic: 'mitch',
+            author: 'butter_bridge',
+            body: 'I find this existence challenging',
+            created_at: '2018-11-15T12:21:54.171+00:00',
+            votes: 100
+          });
+        });
+    });
 
     it('GET status:404 responds with error message when request is made with an article_id that does not exist', () => {
       return request(app)
         .get('/api/articles/99999999')
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).to.equal('Article_Id Not Found');
+          expect(body.msg).to.equal('Route Not Found');
         });
     });
   });
@@ -188,6 +248,30 @@ describe('/', () => {
           ]);
         });
     });
+    it('GET status:404 responds with error message when request is made for comments with an article_id that does not exist', () => {
+      return request(app)
+        .get('/api/articles/1000/comments')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('Route Not Found');
+        });
+    });
+    it('PUT status:405 responds with error message when request is made for comments with an article_id on wrong path', () => {
+      return request(app)
+        .put('/api/articles/1/comments')
+        .expect(405)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('Method Not Allowed');
+        });
+    });
+    it('GET status:400 responds with error message when request is made for comments with an article_id, sorted by an invalid column', () => {
+      return request(app)
+        .get('/api/articles/1/comments?sort_by=not-a-valid-column')
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('Column does Not Exist');
+        });
+    });
   });
 
   describe('/articles/:article_id/comments', () => {
@@ -201,14 +285,24 @@ describe('/', () => {
         })
         .expect(201)
         .then(({ body }) => {
-          expect(body.comment[0]).to.have.keys(
+          expect(body.comment).to.include.keys(
             'comment_id',
             'author',
-            'article_id',
             'votes',
             'created_at',
             'body'
           );
+        });
+    });
+    it('POST status:400 responds with error message when request is made for comments with a request body that does not have all the required keys', () => {
+      return request(app)
+        .post('/api/articles/1/comments')
+        .send({
+          username: 'lurker'
+        })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('violates not null violation');
         });
     });
   });
@@ -241,6 +335,24 @@ describe('/', () => {
           expect(body.msg).to.equal('Bad Request, incorrect form for id!');
         });
     });
+    it('PATCH status:404 responds with error message when request is made with a valid comment_id which does not exist', () => {
+      return request(app)
+        .patch('/api/comments/1000')
+        .send({ inc_votes: 24 })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('Route Not Found');
+        });
+    });
+    it('PUT status:405 responds with error message when request is made on an invalid path', () => {
+      return request(app)
+        .put('/api/comments/1')
+        .send({ inc_votes: 24 })
+        .expect(405)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('Method Not Allowed');
+        });
+    });
 
     it('DELETE returns status 204 and the object which was deleted', () => {
       return request(app)
@@ -248,6 +360,22 @@ describe('/', () => {
         .expect(204)
         .then(({ body }) => {
           expect(body).to.eql({});
+        });
+    });
+    it('DELETE responds with error message when request is made with a valid comment_id which does not exist', () => {
+      return request(app)
+        .delete('/api/comments/1000')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('Route Not Found');
+        });
+    });
+    it('DELETE status:405 responds with error message when request is made on /api', () => {
+      return request(app)
+        .delete('/api')
+        .expect(405)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('Method Not Allowed');
         });
     });
   });
@@ -258,13 +386,30 @@ describe('/', () => {
         .get('/api/users/rogersop')
         .expect(200)
         .then(({ body }) => {
-          expect(body.user).to.be.an('array');
-          expect(body.user[0]).to.eql({
+          expect(body.user).to.be.an('object');
+          expect(body.user).to.eql({
             username: 'rogersop',
             avatar_url:
               'https://avatars2.githubusercontent.com/u/24394918?s=400&v=4',
             name: 'paul'
           });
+        });
+    });
+    it('GET status:404 responds with error message when request is made with a username that does not exist', () => {
+      return request(app)
+        .get('/api/users/not-a-username')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('Route Not Found');
+        });
+    });
+    it('PUT status:405 responds with error message when request is made on an invalid path', () => {
+      return request(app)
+        .put('/api/users/butter_bridge')
+        .send({ inc_votes: 24 })
+        .expect(405)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('Method Not Allowed');
         });
     });
   });

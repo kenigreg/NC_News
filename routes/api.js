@@ -6,15 +6,12 @@ const usersRouter = require('./usersRouter');
 
 const { methodNotAllowed } = require('../errors');
 
-apiRouter.use('/topics', topicsRouter);
-// .route('/topics')
-// .get((req, res) => res.send({ ok: true }))
-//.all(methodNotAllowed);
+apiRouter.use('/topics', topicsRouter).all(methodNotAllowed);
 
-apiRouter.use('/articles', articlesRouter);
+apiRouter.use('/articles', articlesRouter).all(methodNotAllowed);
 
-apiRouter.use('/comments', commentsRouter);
+apiRouter.use('/comments', commentsRouter).all(methodNotAllowed);
 
-apiRouter.use('/users', usersRouter);
+apiRouter.use('/users', usersRouter).all(methodNotAllowed);
 
 module.exports = apiRouter;

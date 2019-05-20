@@ -4,8 +4,10 @@ exports.getUserName = (req, res, next) => {
   const { username } = req.params;
 
   fetchUserName(username)
-    .then(user => {
-      res.status(200).send({ user });
+    .then(([user]) => {
+      if (!user) {
+        return Promise.reject({ status: 404, msg: 'Route Not Found' });
+      } else res.status(200).send({ user });
     })
     .catch(next);
 };

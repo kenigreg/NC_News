@@ -17,8 +17,6 @@ const formatComments = (commentsData, commentsRefObj) => {
     delete newComment.belongs_to;
     delete newComment.created_by;
     return newComment;
-    // const { belongs_to, created_by, ...restOfStuff } = comment;
-    // return { , ...restOfStuff };
   });
 
   const newComments = getCurrentDate(newArray);
