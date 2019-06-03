@@ -380,6 +380,23 @@ describe('/api', () => {
     });
   });
 
+  describe.only('/users', () => {
+    it('GET returns status:200 and user object containing an array of users', () => {
+      return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.users).to.be.an('array');
+          expect(body.users[0]).to.eql({
+            username: 'butter_bridge',
+            name: 'jonny',
+            avatar_url:
+              'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
+          });
+        });
+    });
+  });
+
   describe('/users/:username', () => {
     it('GET returns status:200 and user object containing an array of user by passed username', () => {
       return request(app)

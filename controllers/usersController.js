@@ -1,4 +1,4 @@
-const { fetchUserName } = require('../models/usersModel');
+const { fetchUserName, fetchUsers } = require('../models/usersModel');
 
 exports.getUserName = (req, res, next) => {
   const { username } = req.params;
@@ -9,5 +9,11 @@ exports.getUserName = (req, res, next) => {
         return Promise.reject({ status: 404, msg: 'Route Not Found' });
       } else res.status(200).send({ user });
     })
+    .catch(next);
+};
+
+exports.getUsers = (req, res, next) => {
+  fetchUsers()
+    .then(users => res.status(200).send({ users }))
     .catch(next);
 };

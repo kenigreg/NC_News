@@ -6,3 +6,7 @@ exports.fetchUserName = username => {
     .from('users')
     .where('users.username', '=', username);
 };
+
+exports.fetchUsers = () => {
+  return connection.table('users').select('*');
+};
