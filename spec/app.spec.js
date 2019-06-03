@@ -380,7 +380,7 @@ describe('/api', () => {
     });
   });
 
-  describe.only('/users', () => {
+  describe('/users', () => {
     it('GET returns status:200 and user object containing an array of users', () => {
       return request(app)
         .get('/api/users')
