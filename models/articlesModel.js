@@ -71,3 +71,9 @@ exports.insertCommentsByArticleId = keys => {
     .insert(keys)
     .returning('*');
 };
+
+exports.insertArticle = keys => {
+  return connection('articles')
+    .insert(keys)
+    .returning('*');
+};

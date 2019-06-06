@@ -3,7 +3,8 @@ const {
   fetchArticlesById,
   changeVotesByArticleId,
   fetchCommentsByArticleId,
-  insertCommentsByArticleId
+  insertCommentsByArticleId,
+  insertArticle
 } = require('../models/articlesModel');
 
 exports.getArticles = (req, res, next) => {
@@ -66,6 +67,22 @@ exports.postCommentsByArticleId = (req, res, next) => {
         });
       }
       res.status(201).send({ comment });
+    })
+    .catch(next);
+};
+
+exports.postArticle = (req, res, next) => {
+  const { username, title, topic, body } = req.body;
+  const keys = { author: username, title, topic, body };
+  insertArticle(keys)
+    .then(([article]) => {
+      if (Object.keys(req.body).length !== 4) {
+        return Promise.reject({
+          status: 400,
+          msg: 'violates not null violation'
+        });
+      }
+      res.status(201).send({ article });
     })
     .catch(next);
 };

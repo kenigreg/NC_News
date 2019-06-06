@@ -106,6 +106,39 @@ describe('/api', () => {
           });
         });
     });
+    it('POST returns status:201 and posted article objects containing article posted', () => {
+      return request(app)
+        .post('/api/articles')
+        .send({
+          username: 'icellusedkars',
+          body: 'I am really looking forward to wilding out.',
+          topic: 'mitch',
+          title: 'Going all out'
+        })
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.article).to.include.keys(
+            'article_id',
+            'author',
+            'votes',
+            'created_at',
+            'body',
+            'title',
+            'topic'
+          );
+        });
+    });
+    it('POST status:400 responds with error message when request is made for comments with a request body that does not have all the required keys', () => {
+      return request(app)
+        .post('/api/articles')
+        .send({
+          username: 'lurker'
+        })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('violates not null violation');
+        });
+    });
   });
 
   describe('/articles', () => {
