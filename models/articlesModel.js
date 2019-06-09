@@ -2,7 +2,6 @@ const connection = require('../db/connection');
 
 exports.fetchArticles = (sort_by, order, author, topic, p, limit) => {
   return connection
-    .table('articles')
     .select(
       'articles.author',
       'articles.title',
@@ -11,7 +10,7 @@ exports.fetchArticles = (sort_by, order, author, topic, p, limit) => {
       'articles.created_at',
       'articles.votes'
     )
-    .countDistinct('articles.article_id as total_count')
+    .from('articles')
     .limit(limit || 10)
     .offset(limit * (p - 1))
     .orderBy(sort_by || 'created_at', order || 'desc')
