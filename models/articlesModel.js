@@ -11,6 +11,7 @@ exports.fetchArticles = (sort_by, order, author, topic, p, limit) => {
       'articles.created_at',
       'articles.votes'
     )
+    .countDistinct('articles.article_id as total_count')
     .limit(limit || 10)
     .offset(limit * (p - 1))
     .orderBy(sort_by || 'created_at', order || 'desc')
@@ -18,6 +19,7 @@ exports.fetchArticles = (sort_by, order, author, topic, p, limit) => {
       if (author) query.where('articles.author', '=', author);
       if (topic) query.where('topic', '=', topic);
     })
+
     .count('comments.article_id as comment_count')
     .groupBy('articles.article_id')
     .leftJoin('comments', 'articles.article_id', '=', 'comments.article_id');

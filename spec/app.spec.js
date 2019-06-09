@@ -43,7 +43,8 @@ describe('/api', () => {
             author: 'butter_bridge',
             votes: 100,
             created_at: '2018-11-15T12:21:54.171+00:00',
-            comment_count: '13'
+            comment_count: '13',
+            total_count: '1'
           });
           expect(body.articles[0]).to.contain.keys(
             'author',
@@ -68,7 +69,8 @@ describe('/api', () => {
             author: 'butter_bridge',
             comment_count: '13',
             created_at: '2018-11-15T12:21:54.171+00:00',
-            votes: 100
+            votes: 100,
+            total_count: '1'
           });
         });
     });
@@ -85,7 +87,8 @@ describe('/api', () => {
             author: 'butter_bridge',
             comment_count: '13',
             created_at: '2018-11-15T12:21:54.171+00:00',
-            votes: 100
+            votes: 100,
+            total_count: '1'
           });
         });
     });
@@ -102,7 +105,8 @@ describe('/api', () => {
             author: 'rogersop',
             comment_count: '2',
             created_at: '2002-11-19T12:21:54.171+00:00',
-            votes: 0
+            votes: 0,
+            total_count: '1'
           });
         });
     });
