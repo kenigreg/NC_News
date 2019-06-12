@@ -27,6 +27,29 @@ describe('/api', () => {
           expect(body.topics[0]).to.contain.keys('slug', 'description');
         });
     });
+    it('POST returns status:201 and posted topic', () => {
+      return request(app)
+        .post('/api/topics')
+        .send({
+          description: 'The man who cooks delicious meals',
+          slug: 'cooking'
+        })
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.topic).to.include.keys('slug', 'description');
+        });
+    });
+    it('POST status:400 responds with error message when request is made for comments with a request body that does not have all the required keys', () => {
+      return request(app)
+        .post('/api/topics')
+        .send({
+          slug: 'cooking'
+        })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('violates not null violation');
+        });
+    });
   });
   describe('/articles', () => {
     it('GET returns status:200 and articles objects containing an array of articles', () => {
@@ -237,6 +260,22 @@ describe('/api', () => {
           });
         });
     });
+    it('DELETE returns status 204 and the object which was deleted', () => {
+      return request(app)
+        .delete('/api/articles/1')
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).to.eql({});
+        });
+    });
+    it('DELETE responds with error message when request is made with a valid article_id which does not exist', () => {
+      return request(app)
+        .delete('/api/articles/1000')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('Route Not Found');
+        });
+    });
 
     it('GET status:404 responds with error message when request is made with an article_id that does not exist', () => {
       return request(app)
@@ -426,6 +465,31 @@ describe('/api', () => {
             avatar_url:
               'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
           });
+        });
+    });
+    it('POST returns status:201 and posted user objects containing user posted', () => {
+      return request(app)
+        .post('/api/users')
+        .send({
+          username: 'kenny',
+          name: 'greg',
+          avatar_url:
+            'https://cdn0.iconfinder.com/data/icons/iconshock_guys/512/andrew.png'
+        })
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.user).to.include.keys('username', 'name', 'avatar_url');
+        });
+    });
+    it('POST status:400 responds with error message when request is made for users with a request body that does not have all the required keys', () => {
+      return request(app)
+        .post('/api/users')
+        .send({
+          username: 'lurker'
+        })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('violates not null violation');
         });
     });
   });

@@ -4,7 +4,8 @@ const {
   changeVotesByArticleId,
   fetchCommentsByArticleId,
   insertCommentsByArticleId,
-  insertArticle
+  insertArticle,
+  removeArticleById
 } = require('../models/articlesModel');
 
 exports.getArticles = (req, res, next) => {
@@ -83,6 +84,17 @@ exports.postArticle = (req, res, next) => {
         });
       }
       res.status(201).send({ article });
+    })
+    .catch(next);
+};
+
+exports.deleteArticleByArticleId = (req, res, next) => {
+  const { article_id } = req.params;
+  removeArticleById(article_id)
+    .then(article => {
+      if (article.length === 0) {
+        return Promise.reject({ status: 404, msg: 'Route Not Found' });
+      } else res.status(204).send({ article });
     })
     .catch(next);
 };

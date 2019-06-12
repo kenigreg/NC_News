@@ -10,3 +10,9 @@ exports.fetchUserName = username => {
 exports.fetchUsers = () => {
   return connection.table('users').select('*');
 };
+
+exports.insertUser = keys => {
+  return connection('users')
+    .insert(keys)
+    .returning('*');
+};
