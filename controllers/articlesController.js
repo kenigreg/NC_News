@@ -48,9 +48,13 @@ exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
   fetchCommentsByArticleId(article_id, sort_by, order)
     .then(comments => {
-      if (comments.length === 0) {
-        return Promise.reject({ status: 404, msg: 'Route Not Found' });
-      } else res.status(200).send({ comments });
+      fetchArticlesById(article_id)
+        .then(article => {
+          console.log(article);
+          if (article.length !== 0) return res.status(200).send({ comments });
+          else return Promise.reject({ status: 404, msg: 'Route Not Found' });
+        })
+        .catch(next);
     })
     .catch(next);
 };
