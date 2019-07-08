@@ -2,7 +2,9 @@ const { fetchTopics, insertTopic } = require('../models/topicsModel');
 
 exports.getTopics = (req, res, next) => {
   fetchTopics()
-    .then(topics => res.status(200).send({ topics }))
+    .then(topics => {
+      return res.status(200).send({ topics });
+    })
     .catch(next);
 };
 
@@ -21,3 +23,5 @@ exports.postTopics = (req, res, next) => {
     })
     .catch(next);
 };
+
+//res.status(200).send({ topics });

@@ -25,8 +25,10 @@ describe('/api', () => {
             slug: 'mitch'
           });
           expect(body.topics[0]).to.contain.keys('slug', 'description');
+          expect(body.topics[0].slug).to.eql('mitch');
         });
     });
+
     it('POST returns status:201 and posted topic', () => {
       return request(app)
         .post('/api/topics')

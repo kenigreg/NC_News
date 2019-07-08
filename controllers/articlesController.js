@@ -50,7 +50,6 @@ exports.getCommentsByArticleId = (req, res, next) => {
     .then(comments => {
       fetchArticlesById(article_id)
         .then(article => {
-          console.log(article);
           if (article.length !== 0) return res.status(200).send({ comments });
           else return Promise.reject({ status: 404, msg: 'Route Not Found' });
         })
