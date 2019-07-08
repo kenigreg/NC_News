@@ -6,6 +6,8 @@ To run the project on your local machine, you can clone this repo containing the
 
 You will need to have [Node.js](https://nodejs.org/en/download/) installed as well.
 
+The project is hosted on heroku and the endpoints can be found here [https://gregs-ncnews.herokuapp.com/api](https://gregs-ncnews.herokuapp.com/api)
+
 ### Available Scripts
 
 Create development and test databases locally:
