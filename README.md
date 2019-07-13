@@ -40,25 +40,29 @@ Run the server with `node`:
 npm start
 ```
 
+## Dependencies
+
+Other dependencies that needs to be installed are [ExpressJs](https://expressjs.com/), [KnexJs](https://knexjs.org/), [Supertest](https://www.npmjs.com/package/supertest), [Chai](https://www.chaijs.com/), and [Mocha](https://mochajs.org/)
+
 ## Available endpoints
 
-GET /api/topics
-POST /api/topics
+GET [/api/topics]
+POST [/api/topics]
 
-GET /api/articles
-POST /api/articles
+GET [/api/articles]
+POST [/api/articles]
 
-GET /api/articles/:article_id
-PATCH /api/articles/:article_id
-DELTE /api/articles/:article_id
+GET [/api/articles/:article_id]
+PATCH [/api/articles/:article_id]
+DELTE [/api/articles/:article_id]
 
-GET /api/articles/:article_id/comments
-POST /api/articles/:article_id/comments
+GET [/api/articles/:article_id/comments]
+POST [/api/articles/:article_id/comments]
 
-PATCH /api/comments/:comment_id
-DELETE /api/comments/:comment_id
+PATCH [/api/comments/:comment_id]
+DELETE [/api/comments/:comment_id]
 
-GET /api/users
-POST /api/users
+GET [/api/users]
+POST [/api/users]
 
-GET /api/users/:username
+GET [/api/users/:username]
