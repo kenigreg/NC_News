@@ -41,7 +41,7 @@ describe('/api', () => {
           expect(body.topic).to.include.keys('slug', 'description');
         });
     });
-    it('POST status:400 responds with error message when request is made for comments with a request body that does not have all the required keys', () => {
+    it('POST status:400 responds with error message when a POST request is made to topics with a request body that does not have all the required keys', () => {
       return request(app)
         .post('/api/topics')
         .send({
@@ -172,7 +172,7 @@ describe('/api', () => {
         .get('/api/articles?topic=not-a-topic')
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).to.equal('Route Not Found');
+          expect(body.msg).to.equal('Topic Not Found');
         });
     });
     it('GET status:404 responds with error message when request is made with an author that does not exist', () => {
@@ -180,7 +180,7 @@ describe('/api', () => {
         .get('/api/articles?author=not-an-author')
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).to.equal('Route Not Found');
+          expect(body.msg).to.equal('Author Not Found');
         });
     });
     it('GET status:400 responds with error message when request is made with a column that does not exist', () => {
@@ -284,7 +284,7 @@ describe('/api', () => {
         .get('/api/articles/99999999')
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).to.equal('Route Not Found');
+          expect(body.msg).to.equal('Article Not Found');
         });
     });
   });

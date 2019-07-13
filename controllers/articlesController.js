@@ -14,7 +14,11 @@ exports.getArticles = (req, res, next) => {
   fetchArticles(sort_by, order, author, topic, p, limit)
     .then(articles => {
       if (articles.length === 0) {
-        return Promise.reject({ status: 404, msg: 'Route Not Found' });
+        return Promise.reject(
+          topic
+            ? { status: 404, msg: 'Topic Not Found' }
+            : { status: 404, msg: 'Author Not Found' }
+        );
       } else res.status(200).send({ articles });
     })
     .catch(next);
@@ -26,7 +30,7 @@ exports.getArticlesById = (req, res, next) => {
   fetchArticlesById(article_id)
     .then(([article]) => {
       if (!article) {
-        return Promise.reject({ status: 404, msg: 'Route Not Found' });
+        return Promise.reject({ status: 404, msg: 'Article Not Found' });
       } else res.status(200).send({ article });
     })
     .catch(next);
